@@ -95,8 +95,15 @@ async function buildServerStatsEmbed(healthData, dbStats, client) {
     const statusText = isOnline ? 'OPERATIONAL' : 'OFFLINE / RECONNECTING';
     const embedColor = isOnline ? config.colors.primary : config.colors.danger;
 
-    const serverUptime = healthData.local.data?.uptime || healthData.public.data?.uptime || 'N/A';
-    const serverMemory = healthData.local.data?.memory || `${healthData.system.usedMemMB}MB`;
+    const memObj = healthData.local.data?.memory || healthData.public.data?.memory;
+    const serverMemory = memObj && typeof memObj === 'object'
+        ? `${memObj.rss_mb || memObj.heap_used_mb}MB`
+        : (memObj || `${healthData.system.usedMemMB}MB`);
+
+    const serverUptime = healthData.local.data?.uptime_human
+        || (healthData.local.data?.uptime ? `${Math.floor(healthData.local.data.uptime / 60)}m` : null)
+        || healthData.public.data?.uptime_human
+        || `${Math.floor(healthData.system.uptimeSeconds / 60)}m`;
     const pluginVersion = healthData.versionInfo?.version ? `v${healthData.versionInfo.version} Stable` : config.versions.plugin;
     const serverVersion = healthData.local.data?.version ? `v${healthData.local.data.version}` : config.versions.server;
     const ffmpegStatus = (healthData.local.data?.ffmpeg || healthData.public.data?.ffmpeg) ? '✅ Hardware Accelerated' : '⚠️ Bundled';
@@ -105,12 +112,12 @@ async function buildServerStatsEmbed(healthData, dbStats, client) {
 
     const embed = {
         title: '📊 REDitors — Real-Time Server & Platform Status',
-        description: `Live performance telemetry from the **REDitors Local Host Server** and Cloudflare Edge Network.`,
+        description: `Live performance telemetry from the **REDitors Production Cloud Server** and Edge Network.`,
         color: embedColor,
         thumbnail: { url: config.urls.logoUrl },
         fields: [
             {
-                name: '🖥️ PC Host Server (Primary Engine)',
+                name: '🖥️ Production Cloud Server (Primary Engine)',
                 value: `**Status:** ${statusEmoji} **${statusText}**\n` +
                        `**Local Endpoint:** \`${config.urls.localServer}\` (${healthData.local.latency}ms)\n` +
                        `**Public Tunnel:** [pc.reditors.com](${config.urls.publicServer}) (${healthData.public.latency}ms)\n` +

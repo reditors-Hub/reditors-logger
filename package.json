@@ -1,14 +1,16 @@
 {
   "name": "reditors-logger",
-  "version": "1.0.0",
-  "description": "Standalone Discord and Telegram Real-Time Logging & Telemetry Service for REDitors (optimized for Render.com Free Tier)",
+  "version": "1.2.0",
+  "description": "Standalone Discord & Telegram Real-Time Logging, Telemetry & 24/7 Interactive Discord Bot for REDitors",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "register": "node registerCommands.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "dotenv": "^16.4.5",
+    "@supabase/supabase-js": "^2.49.0",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
     "express": "^4.19.2"
   },
   "engines": {

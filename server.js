@@ -4,6 +4,7 @@ const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const discord = require('./discord-logger');
 const telegram = require('./telegram-logger');
+const { startDiscordBot } = require('./bot');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -81,6 +82,15 @@ app.post('/api/telemetry/web', (req, res) => {
 
 const server = app.listen(PORT, () => {
     console.log(`[reditors-logger] Service running on port ${PORT}`);
+
+    // Start 24/7 Interactive Discord Bot Engine
+    try {
+        startDiscordBot();
+        console.log('[reditors-logger] 24/7 Interactive Discord Bot Engine initialized');
+    } catch (botErr) {
+        console.error('[reditors-logger] Failed to start interactive bot engine:', botErr.message);
+    }
+
     if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
         try {
             const supabaseAdmin = createClient(

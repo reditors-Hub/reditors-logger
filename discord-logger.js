@@ -97,7 +97,7 @@ async function _processQueue() {
                 console.error(`[discord] Failed to send message to channel ${item.channelId} (HTTP ${res.status}):`, JSON.stringify(data));
             }
 
-            await new Promise(r => setTimeout(r, 180));
+            await new Promise(r => setTimeout(r, 300));
         } catch (postErr) {
             console.error('[discord] Network error posting message:', postErr.message);
         }
@@ -108,7 +108,7 @@ async function _processQueue() {
 
 function queueMessage(channelId, payload) {
     if (!channelId || !BOT_TOKEN) return;
-    if (_sendQueue.length > 100) {
+    if (_sendQueue.length > 50) {
         _sendQueue.shift();
     }
     _sendQueue.push({ channelId, payload });

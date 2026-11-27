@@ -159,8 +159,14 @@ function startDiscordBot() {
                 return;
             }
 
-            // 2. Buttons (Support Voice, Temp Voice, Tickets, Roles)
+            // 2. Buttons (Performance, Support Voice, Temp Voice, Tickets, Roles)
             if (interaction.isButton()) {
+                // Performance dashboard buttons
+                if (interaction.customId.startsWith('btn_perf_')) {
+                    const { handlePerformanceButton } = require('./commands/performance');
+                    await handlePerformanceButton(interaction);
+                    return;
+                }
                 let handled = await handleSupportVoiceButton(interaction);
                 if (!handled) {
                     handled = await handleVoiceButton(interaction);

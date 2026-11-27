@@ -159,12 +159,30 @@ function startDiscordBot() {
                 return;
             }
 
-            // 2. Buttons (Performance, Support Voice, Temp Voice, Tickets, Roles)
+            // 2. Buttons (Performance, Poll, Giveaway, Ticket, Support Voice, Temp Voice, Roles)
             if (interaction.isButton()) {
                 // Performance dashboard buttons
                 if (interaction.customId.startsWith('btn_perf_')) {
                     const { handlePerformanceButton } = require('./commands/performance');
                     await handlePerformanceButton(interaction);
+                    return;
+                }
+                // Poll vote buttons
+                if (interaction.customId.startsWith('poll_vote_')) {
+                    const { handlePollButton } = require('./commands/poll');
+                    await handlePollButton(interaction);
+                    return;
+                }
+                // Giveaway entry button
+                if (interaction.customId === 'giveaway_enter') {
+                    const { handleGiveawayButton } = require('./commands/giveaway');
+                    await handleGiveawayButton(interaction);
+                    return;
+                }
+                // Ticket close button
+                if (interaction.customId.startsWith('ticket_close_')) {
+                    const { handleTicketClose } = require('./commands/ticket');
+                    await handleTicketClose(interaction);
                     return;
                 }
                 let handled = await handleSupportVoiceButton(interaction);
@@ -182,6 +200,18 @@ function startDiscordBot() {
 
             // 3. Modal Submissions
             if (interaction.isModalSubmit()) {
+                // Ticket modal
+                if (interaction.customId === 'ticket_modal') {
+                    const { handleTicketModal } = require('./commands/ticket');
+                    await handleTicketModal(interaction);
+                    return;
+                }
+                // Feedback modal
+                if (interaction.customId === 'feedback_modal') {
+                    const { handleFeedbackModal } = require('./commands/feedback');
+                    await handleFeedbackModal(interaction);
+                    return;
+                }
                 const handled = await handleVoiceInteraction(interaction);
                 if (!handled) {
                     await handleLinkModal(interaction);
